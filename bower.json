@@ -1,0 +1,31 @@
+{
+  "name": "polymer-weather",
+  "version": "0.0.1",
+  "authors": [
+    "egamboa <estebangam1@gmail.com>"
+  ],
+  "description": "Weather",
+  "main": "index.html",
+  "moduleType": [],
+  "keywords": [
+    "tiempo",
+    "weather"
+  ],
+  "license": "MIT",
+  "homepage": "index.html",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "polymer": "Polymer/polymer#^1.1.0",
+    "iron-ajax": "PolymerElements/iron-ajax#^1.0.0",
+    "iron-image": "PolymerElements/iron-image#^1.0.0",
+    "neon-animation": "PolymerElements/neon-animation#^1.0.0",
+    "paper-header-panel": "PolymerElements/paper-header-panel#^1.0.0",
+    "paper-styles": "PolymerElements/paper-styles#^1.0.0"
+  }
+}

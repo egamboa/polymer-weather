@@ -1,0 +1,49 @@
+<link rel="import" href="../../bower_components/paper-styles/paper-styles.html">
+<dom-module id="custom-current">
+	<style type="text/css">
+		:host{
+			position: absolute;
+			bottom: 15px;
+			right: 15px;
+			text-align: right;
+		}
+		span{
+			display: block;
+			color: white;
+			text-shadow: 0 0 5px black;
+			font-family: 'Roboto', 'Noto';
+		}
+		.city{
+			font-size: 3em;
+			font-weight: bold;
+		}
+		.desc, .humidity{
+			font-size: 2em;
+		}
+		.temp{
+			font-size: 6em;
+			font-weight: bold;
+		}
+	</style>
+	<template>
+		<span class="humidity">{{humidity}}</span>
+		<span class="desc">{{desc}}</span>
+		<span class="city">{{city}}</span>
+		<span class="temp">{{temp}}</span>
+	</template>
+</dom-module>
+
+<script>
+	Polymer({
+		is: 'custom-current',
+		properties: {
+			humidity: Number,
+			temp: Number,
+			desc: String,
+			city: String
+		},
+		ready: function(){
+			console.log("custom-current");
+		}
+	});
+</script>

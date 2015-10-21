@@ -1,0 +1,59 @@
+<link rel="import" href="../../bower_components/iron-ajax/iron-ajax.html">
+<link rel="import" href="../../bower_components/iron-image/iron-image.html">
+<link rel="import" href="../custom-current/custom-current.html">
+<dom-module id="custom-weather">
+	<style type="text/css">
+		:host, custom-weather-holder{
+			width: 100%;
+			height: 100%;
+			overflow: hidden;
+			display: block;
+		}
+		iron-image{
+			width: 100%;
+			height: 100%;
+			position: absolute;
+			background: lightgrey;
+		}
+	</style>
+	<template>
+		<iron-image sizing="cover" preload src="{{imageSrc}}"></iron-image>
+		<iron-ajax
+		    auto
+		    url="http://api.openweathermap.org/data/2.5/weather?lat=9.95&lon=-84.0629&units=metric&lang=es&appid=bd82977b86bf27fb59a04b61b657fb6f"
+		    handle-as="json"
+		    on-response="getCurrentData"
+		    debounce-duration="300"></iron-ajax>
+		<iron-ajax
+		    auto
+		    url="http://api.openweathermap.org/data/2.5/forecast/daily?lat=9.95&lon=-84.0629&cnt=16&units=metric&lang=es&appid=bd82977b86bf27fb59a04b61b657fb6f"
+		    handle-as="json"
+		    on-response="getForecastData"
+		    debounce-duration="300"></iron-ajax>
+		    <custom-current id="currentWeather"></custom-current>
+	</template>
+</dom-module>
+
+<script>
+	Polymer({
+		is: 'custom-weather',
+		properties: {
+			imageSrc: String
+		},
+		ready: function(){
+			console.log("custom-weather");
+		},
+		getCurrentData: function(event){
+			var response = event.detail.response;
+			this.imageSrc = "/polymer-weather/img/" +  response.weather[0].icon + "_bg.jpg";
+			var current = this.$.currentWeather;
+			current.temp = Number(response.main.temp).toFixed(1) + "ºC";
+			current.humidity = Number(response.main.humidity).toFixed(1) + "%";
+			current.desc = response.weather[0].description;
+			current.city = response.name;
+		},
+		getForecastData: function(event){
+			console.log(event.detail.response);
+		}
+	});
+</script>
