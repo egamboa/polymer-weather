@@ -26,6 +26,7 @@
     "iron-image": "PolymerElements/iron-image#^1.0.0",
     "neon-animation": "PolymerElements/neon-animation#^1.0.0",
     "paper-header-panel": "PolymerElements/paper-header-panel#^1.0.0",
-    "paper-styles": "PolymerElements/paper-styles#^1.0.0"
+    "paper-styles": "PolymerElements/paper-styles#^1.0.0",
+    "moment": "~2.10.6"
   }
 }

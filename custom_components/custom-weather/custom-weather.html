@@ -1,6 +1,8 @@
 <link rel="import" href="../../bower_components/iron-ajax/iron-ajax.html">
 <link rel="import" href="../../bower_components/iron-image/iron-image.html">
 <link rel="import" href="../custom-current/custom-current.html">
+<link rel="import" href="../custom-current/custom-current.html">
+
 <dom-module id="custom-weather">
 	<style type="text/css">
 		:host, custom-weather-holder{
@@ -30,10 +32,11 @@
 		    handle-as="json"
 		    on-response="getForecastData"
 		    debounce-duration="300"></iron-ajax>
+		    <custom-forecast id="forecast"></custom-forecast>
 		    <custom-current id="currentWeather"></custom-current>
 	</template>
 </dom-module>
-
+<script src="../../bower_components/moment/moment.js"></script>
 <script>
 	Polymer({
 		is: 'custom-weather',
@@ -53,7 +56,25 @@
 			current.city = response.name;
 		},
 		getForecastData: function(event){
-			console.log(event.detail.response);
-		}
+			var response = event.detail.response;
+			var forecast = this.$.forecast;
+			var list = response.list;
+
+			for (var i = 0; i < list.length; i++){
+				list[i].icon = "img/" + list[i].weather[0].icon + "_bg.jpg";
+				list[i].desc = this.capitalize(list[i].weather[0].description);
+				list[i].humidity = list[i].humidity + "%";
+				list[i].temp.max = Number(list[i].temp.max).toFixed(1) + "º";
+				list[i].temp.min = Number(list[i].temp.min).toFixed(1) + "º";
+
+				var day = moment.unix(Number(list[i].dt));
+				day.locale('es');
+				list[i].date = day.format("dddd[, ]DD/MM/YYYY");
+			}
+			
+		},
+		capitalize: function(s){
+			return s[0].toUpperCase() + s.slice(1);
+		} 
 	});
 </script>
