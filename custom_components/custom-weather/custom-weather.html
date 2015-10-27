@@ -1,7 +1,10 @@
 <link rel="import" href="../../bower_components/iron-ajax/iron-ajax.html">
 <link rel="import" href="../../bower_components/iron-image/iron-image.html">
+<link rel="import" href="../../bower_components/neon-animation/neon-animated-pages.html">
+<link rel="import" href="../../bower_components/neon-animation/neon-animatable.html">
+<link rel="import" href="../../bower_components/neon-animation/neon-animations.html">
 <link rel="import" href="../custom-current/custom-current.html">
-<link rel="import" href="../custom-current/custom-current.html">
+<link rel="import" href="../custom-forecast/custom-forecast.html">
 
 <dom-module id="custom-weather">
 	<style type="text/css">
@@ -17,23 +20,38 @@
 			position: absolute;
 			background: lightgrey;
 		}
+		#pages{
+			position: absolute;
+			height: 100%;
+			width: 100%;
+		}
 	</style>
 	<template>
+
 		<iron-image sizing="cover" preload src="{{imageSrc}}"></iron-image>
+
 		<iron-ajax
 		    auto
 		    url="http://api.openweathermap.org/data/2.5/weather?lat=9.95&lon=-84.0629&units=metric&lang=es&appid=bd82977b86bf27fb59a04b61b657fb6f"
 		    handle-as="json"
 		    on-response="getCurrentData"
 		    debounce-duration="300"></iron-ajax>
+
 		<iron-ajax
 		    auto
 		    url="http://api.openweathermap.org/data/2.5/forecast/daily?lat=9.95&lon=-84.0629&cnt=16&units=metric&lang=es&appid=bd82977b86bf27fb59a04b61b657fb6f"
 		    handle-as="json"
 		    on-response="getForecastData"
 		    debounce-duration="300"></iron-ajax>
-		    <custom-forecast id="forecast"></custom-forecast>
-		    <custom-current id="currentWeather"></custom-current>
+
+		    <neon-animated-pages id="pages" class="flex" entry-animation="{{entryAnimation}}" exit-animation="{{exitAnimation}}" on-track="handleTrack">
+		    	<neon-animatable>
+		    		<custom-forecast id="forecast"></custom-forecast>
+		    	</neon-animatable>
+		    	<neon-animatable>
+		    		<custom-current id="currentWeather"></custom-current>
+		    	</neon-animatable>
+		    </neon-animated-pages>
 	</template>
 </dom-module>
 <script src="../../bower_components/moment/moment.js"></script>
@@ -45,6 +63,9 @@
 		},
 		ready: function(){
 			console.log("custom-weather");
+			this.$.pages.selected = 0;
+			this.exitAnimation = 'slide-up-animation';
+			this.entryAnimation = 'fade-in-animation';
 		},
 		getCurrentData: function(event){
 			var response = event.detail.response;
@@ -61,20 +82,45 @@
 			var list = response.list;
 
 			for (var i = 0; i < list.length; i++){
-				list[i].icon = "img/" + list[i].weather[0].icon + "_bg.jpg";
+				list[i].icon = "http://openweathermap.org/img/w/" + list[i].weather[0].icon + ".png";
 				list[i].desc = this.capitalize(list[i].weather[0].description);
 				list[i].humidity = list[i].humidity + "%";
-				list[i].temp.max = Number(list[i].temp.max).toFixed(1) + "º";
-				list[i].temp.min = Number(list[i].temp.min).toFixed(1) + "º";
+				list[i].temp.max = "Min: "+Number(list[i].temp.max).toFixed(1) + "º";
+				list[i].temp.min = "Max: "+Number(list[i].temp.min).toFixed(1) + "º";
 
 				var day = moment.unix(Number(list[i].dt));
 				day.locale('es');
 				list[i].date = day.format("dddd[, ]DD/MM/YYYY");
 			}
-			
+
+			forecast.list = list;
 		},
 		capitalize: function(s){
 			return s[0].toUpperCase() + s.slice(1);
-		} 
+		},
+		handleTrack: function(e){
+			switch(e.detail.state){
+				case 'start':
+					this.sizeTapped = e.detail.y;
+					break;
+				case 'track':
+					break;
+				case 'end':
+					if(this.$.pages.selected == 0){
+						if(e.detail.y < (this.sizeTapped + 100)){
+							this.exitAnimation = 'fade-out-animation';
+							this.entryAnimation = 'slide-down-animation';
+							this.$.pages.selected = 1;
+						}
+					}	
+					if(this.$.pages.selected == 1 && this.sizeTapped < 50){
+						if(e.detail.y > (this.sizeTapped + 100)){
+							this.exitAnimation = 'slide-up-animation';
+							this.entryAnimation = 'fade-in-animation';
+							this.$.pages.selected = 0;
+						}
+					}
+			}
+		}
 	});
 </script>
